@@ -12,6 +12,9 @@ var mainState = {
             
             //load pipe
             game.load.image('pipe', 'assets/pipe.png');
+            
+            //load sound
+            game.load.audio('jump', 'assets/jump.wav');
 
         },
 
@@ -37,6 +40,7 @@ var mainState = {
             var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             spaceKey.onDown.add(this.jump, this);
             
+            this.jumpSound = game.add.audio('jump');
             
             //call add one pipe 
             this.timer = game.time.events.loop(1500, this.addRowOfPipes, this);
@@ -66,6 +70,7 @@ var mainState = {
                 return;
 
             this.bird.body.velocity.y = -350;
+            this.jumpSound.play();
             
             //create animation on the bird
             var animation = game.add.tween(this.bird);
