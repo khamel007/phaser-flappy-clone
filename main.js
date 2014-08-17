@@ -26,6 +26,7 @@ var mainState = {
             //add gravity
             game.physics.arcade.enable(this.bird);
             this.bird.body.gravity.y = 1000;
+            this.bird.anchor.setTo(-0.2, 0.5);
             
             //create pipes
             this.pipes = game.add.group(); //create group
@@ -52,13 +53,30 @@ var mainState = {
                 this.restartGame();
             }
             
-            game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+            game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
+            
+            if (this.bird.angle < 20)
+                this.bird.angle += 1;
 
         },
 
         jump: function () {
+            
+            if (this.bird.alive == false)
+                return;
 
             this.bird.body.velocity.y = -350;
+            
+            //create animation on the bird
+            var animation = game.add.tween(this.bird);
+            
+            //set animation to change the angle of sprite to -20 in 100 milliseconds
+            animation.to({angle: -20}, 100);
+            
+            //start animation
+            animation.start();
+            
+            //this can  also be addedd as game.add.tween(this.bird).to({angle: -20}, 100).start();
         },
 
         restartGame: function () {
@@ -97,6 +115,24 @@ var mainState = {
                 if (i != hole && i  != hole + 1)
                     this.addOnePipe(400, i * 60 + 10);
             
+        },
+    
+        hitPipe: function() {
+            if (this.bird.alive == false)
+                return;
+            
+            this.bird.alive = false;
+            
+            game.time.events.remove(this.timer);
+            
+            this.pipes.forEachAlive(function(p) {
+                                    
+                                    p.body.velocity.x = 0;
+                                    
+                                    
+                                    }, this);
+        
+        
         },
           
     };
